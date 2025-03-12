@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCore.Domain", "HCore.Domain\HCore.Domain.csproj", "{ECBE9921-545D-4AF1-AF4E-12255952B1E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCore.Domain", "HCore.Domain\HCore.Domain.csproj", "{ECBE9921-545D-4AF1-AF4E-12255952B1E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCore.Infrastructure", "HCore.Infrastructure\HCore.Infrastructure.csproj", "{E5E090DF-E6E7-4384-8A0F-F5FCBF8838C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCore.Infrastructure", "HCore.Infrastructure\HCore.Infrastructure.csproj", "{E5E090DF-E6E7-4384-8A0F-F5FCBF8838C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCore.Application", "HCore.Application\HCore.Application.csproj", "{69DF905B-C8AC-443D-A2C8-9687E24A15C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCore.API", "HCore.API\HCore.API.csproj", "{DFF53EE9-BABA-4968-931D-15EB275A14C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{E5E090DF-E6E7-4384-8A0F-F5FCBF8838C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5E090DF-E6E7-4384-8A0F-F5FCBF8838C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5E090DF-E6E7-4384-8A0F-F5FCBF8838C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69DF905B-C8AC-443D-A2C8-9687E24A15C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69DF905B-C8AC-443D-A2C8-9687E24A15C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69DF905B-C8AC-443D-A2C8-9687E24A15C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69DF905B-C8AC-443D-A2C8-9687E24A15C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFF53EE9-BABA-4968-931D-15EB275A14C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFF53EE9-BABA-4968-931D-15EB275A14C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFF53EE9-BABA-4968-931D-15EB275A14C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFF53EE9-BABA-4968-931D-15EB275A14C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,8 +9,7 @@ namespace HCore.Domain
 {
     public interface IUnitOfWork
     {
-        IUserRepository Users { get; }
-        Task<int> SaveChangesAsync();
+        Task<int> CommitAsync();
     }
 
 }
