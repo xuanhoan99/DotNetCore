@@ -1,5 +1,4 @@
 ﻿using HCore.Domain;
-using HCore.Domain.Repositories;
 
 namespace HCore.Infrastructure.Persistence
 {

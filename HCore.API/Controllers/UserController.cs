@@ -44,5 +44,16 @@ namespace HCore.API.Controllers
             var result = await _userService.DeleteUserAsync(id);
             return result ? Ok("User deleted successfully") : NotFound("User not found");
         }
+
+        [HttpGet("profile")]
+        public IActionResult GetCurrentUserProfile()
+        {
+            // Lấy thông tin người dùng hiện tại từ token
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+            return Ok(new { userId, userEmail, userRole });
+        }
     }
 }

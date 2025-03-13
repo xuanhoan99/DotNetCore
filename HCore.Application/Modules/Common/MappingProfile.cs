@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
+using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.Users.Dtos;
 using HCore.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HCore.Application.Modules.Common
 {
@@ -16,6 +12,8 @@ namespace HCore.Application.Modules.Common
             // Định nghĩa ánh xạ giữa các DTO và Entity tại đây
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
+            CreateMap<Role, RoleDto>();
+            CreateMap<RoleDto, Role>();
         }
     }
 }

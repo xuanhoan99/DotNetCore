@@ -17,6 +17,7 @@ namespace HCore.Infrastructure
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
             return services;
         }
