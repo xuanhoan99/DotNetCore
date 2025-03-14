@@ -24,8 +24,8 @@ namespace HCore.API.Controllers
             return Ok(role);
         }
 
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetRoleById(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> GetRoleById(int id)
         {
             var role = await _roleService.GetRoleByIdAsync(id);
             if (role == null) return NotFound();
@@ -39,15 +39,15 @@ namespace HCore.API.Controllers
             return Ok(roles);
         }
 
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateRole(Guid id, [FromBody] CreateRoleDto dto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateRole(int id, [FromBody] CreateRoleDto dto)
         {
             var result = await _roleService.UpdateRoleAsync(id, dto);
             return result ? Ok("Role updated successfully") : NotFound("Role not found");
         }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteRole(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRole(int id)
         {
             var result = await _roleService.DeleteRoleAsync(id);
             return result ? Ok("Role deleted successfully") : NotFound("Role not found");

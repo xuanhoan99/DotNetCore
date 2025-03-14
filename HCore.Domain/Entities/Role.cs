@@ -2,11 +2,14 @@
 
 namespace HCore.Domain.Entities
 {
-    public class Role : AuditEntityBase<Guid>
+    public class Role : AuditEntityBase
     {
+        public int Id { get; set; }
         public string Name { get; private set; }
 
-        public Role(Guid id, string name, string createdBy) : base(id, createdBy)
+        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+        public Role(string name, string createdBy) : base( createdBy)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Role name cannot be empty.");

@@ -23,19 +23,19 @@ namespace HCore.Application.Modules.Users.Services
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
         {
-            var user = new User(Guid.NewGuid(), dto.FullName, dto.Email, dto.Password,"");
+            var user = new User( dto.FullName, dto.Email, dto.Password,"");
             await _userRepository.AddAsync(user);
             await _unitOfWork.CommitAsync();
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<UserDto> GetUserByIdAsync(Guid id)
+        public async Task<UserDto> GetUserByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<UserDto> UpdateUserAsync(Guid id, UpdateUserDto dto)
+        public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto dto)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null) return null;
@@ -46,7 +46,7 @@ namespace HCore.Application.Modules.Users.Services
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<bool> DeleteUserAsync(Guid id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null) return false;

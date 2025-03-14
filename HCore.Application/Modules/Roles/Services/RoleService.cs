@@ -22,7 +22,7 @@ namespace HCore.Application.Modules.Roles.Services
 
         public async Task<RoleDto> CreateRoleAsync(CreateRoleDto dto)
         {
-            var role = new Role(Guid.NewGuid(), dto.Name, "system");
+            var role = new Role(dto.Name, "system");
             await _roleRepository.AddAsync(role);
             await _unitOfWork.CommitAsync();
             return _mapper.Map<RoleDto>(role);
@@ -34,13 +34,13 @@ namespace HCore.Application.Modules.Roles.Services
             return _mapper.Map<IEnumerable<RoleDto>>(roles);
         }
 
-        public async Task<RoleDto> GetRoleByIdAsync(Guid id)
+        public async Task<RoleDto> GetRoleByIdAsync(int id)
         {
             var role = await _roleRepository.GetByIdAsync(id);
             return _mapper.Map<RoleDto>(role);
         }
 
-        public async Task<bool> UpdateRoleAsync(Guid id, CreateRoleDto dto)
+        public async Task<bool> UpdateRoleAsync(int id, CreateRoleDto dto)
         {
             var role = await _roleRepository.GetByIdAsync(id);
             if (role == null) return false;
@@ -49,7 +49,7 @@ namespace HCore.Application.Modules.Roles.Services
             return true;
         }
 
-        public async Task<bool> DeleteRoleAsync(Guid id)
+        public async Task<bool> DeleteRoleAsync(int id)
         {
             var role = await _roleRepository.GetByIdAsync(id);
             if (role == null) return false;

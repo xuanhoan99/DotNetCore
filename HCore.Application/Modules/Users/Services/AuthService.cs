@@ -32,7 +32,7 @@ namespace HCore.Application.Modules.Users.Services
                 throw new Exception("Invalid credentials");
 
             // Kiểm tra password (ở đây giả sử đang so sánh chuỗi, trong thực tế nên dùng hash)
-            if (user.PasswordHash != dto.Password)
+            if (user.Password != dto.Password)
                 throw new Exception("Invalid credentials");
 
             // Tạo token JWT
@@ -55,7 +55,7 @@ namespace HCore.Application.Modules.Users.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.UserName),
                     new Claim(ClaimTypes.Name, user.FullName),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, "Admin") // Thêm role vào claim

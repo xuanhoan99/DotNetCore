@@ -2,20 +2,26 @@
 
 namespace HCore.Domain.Entities
 {
-    public class User : AuditEntityBase<Guid>
+    public class User : AuditEntityBase
     {
+        public int Id { get; set; }
+        public string UserName { get; set; }
         public string FullName { get; private set; }
         public string Email { get; private set; }
-        public string PasswordHash { get; private set; }
+        public string Password { get; private set; }
         public bool IsActive { get; private set; }
+        public string EmployeeId { get; set; }
+
+        // Quan hệ nhiều-nhiều với Role
+        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
         // Constructor
-        public User(Guid id, string fullName, string email, string passwordHash, string createdBy)
-            : base(id, createdBy)
+        public User(string fullName, string email, string password, string createdBy)
+            : base(createdBy)
         {
             FullName = fullName;
             Email = email;
-            PasswordHash = passwordHash;
+            Password = password;
             IsActive = true; // Mặc định User mới sẽ Active
         }
 
@@ -29,12 +35,12 @@ namespace HCore.Domain.Entities
         }
 
         // Đổi mật khẩu
-        public void ChangePassword(string newPasswordHash)
+        public void ChangePassword(string newPassword)
         {
-            if (string.IsNullOrWhiteSpace(newPasswordHash))
+            if (string.IsNullOrWhiteSpace(newPassword))
                 throw new ArgumentException("Password không được để trống.");
 
-            PasswordHash = newPasswordHash;
+            Password = newPassword;
         }
 
         // Deactivate User

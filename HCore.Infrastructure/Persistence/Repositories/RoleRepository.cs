@@ -33,7 +33,7 @@ namespace HCore.Infrastructure.Persistence.Repositories
             return await _context.Set<Role>().ToListAsync();
         }
 
-        public async Task<Role> GetByIdAsync(Guid id)
+        public async Task<Role> GetByIdAsync(int id)
         {
             return await _context.Set<Role>().FindAsync(id);
         }

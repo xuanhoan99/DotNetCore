@@ -1,17 +1,12 @@
 ﻿namespace HCore.Domain.Common
 {
-    public interface IEntity<TId>
-    {
-        TId Id { get; }
-    }
-
-    public interface IDeletedEntity<TId> : IEntity<TId>
+    public interface IDeletedEntity
     {
         bool IsDeleted { get; }
         void SoftDelete();
     }
 
-    public interface IAuditEntity<TId> : IDeletedEntity<TId>
+    public interface IAuditEntity
     {
         string CreatedBy { get; }
         DateTime CreatedAt { get; }
@@ -22,21 +17,11 @@
         void Approve(string approvedBy, string approvalStatus);
     }
 
-    public abstract class EntityBase<TId> : IEntity<TId>
-    {
-        public TId Id { get; private set; }
-
-        protected EntityBase(TId id)
-        {
-            Id = id;
-        }
-    }
-
-    public abstract class DeletedEntityBase<TId> : EntityBase<TId>, IDeletedEntity<TId>
+    public abstract class DeletedEntityBase: IDeletedEntity
     {
         public bool IsDeleted { get; private set; }
 
-        protected DeletedEntityBase(TId id) : base(id)
+        protected DeletedEntityBase()
         {
             IsDeleted = false;
         }
@@ -46,7 +31,7 @@
             IsDeleted = true;
         }
     }
-    public abstract class AuditEntityBase<TId> : DeletedEntityBase<TId>, IAuditEntity<TId>
+    public abstract class AuditEntityBase : DeletedEntityBase, IAuditEntity
     {
         public string CreatedBy { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -54,7 +39,7 @@
         public DateTime? ApprovedAt { get; private set; }
         public string ApprovalStatus { get; private set; }
 
-        protected AuditEntityBase(TId id, string createdBy) : base(id)
+        protected AuditEntityBase(string createdBy)
         {
             CreatedBy = createdBy;
             CreatedAt = DateTime.UtcNow;
