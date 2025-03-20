@@ -1,7 +1,8 @@
-﻿using HCore.Domain;
-using HCore.Domain.Repositories;
+﻿
+
+using HCore.Domain;
 using HCore.Infrastructure.Persistence;
-using HCore.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,9 +16,17 @@ namespace HCore.Infrastructure
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IUserRepository, UserRepository>();
+            // Đăng ký ASP.NET Identity
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                // Cấu hình Identity nếu cần
+                options.Password.RequiredLength = 6;
+                // ...
+            })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IRoleRepository, RoleRepository>();
 
             return services;
         }
