@@ -17,7 +17,7 @@
         void Approve(string approvedBy, string approvalStatus);
     }
 
-    public abstract class DeletedEntityBase: IDeletedEntity
+    public abstract class DeletedEntityBase : IDeletedEntity
     {
         public bool IsDeleted { get; private set; }
 

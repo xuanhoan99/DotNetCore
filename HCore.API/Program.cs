@@ -1,7 +1,9 @@
 ﻿using HCore.Application;
 using HCore.Infrastructure;
+using HCore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,7 +41,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Cấu hình Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console() // Ghi log ra Console
+    .WriteTo.File("logs/app_log.txt", rollingInterval: RollingInterval.Day) // Ghi log ra file
+                                                                            //.WriteTo.Seq("http://localhost:5341") // Todo Nếu dùng Seq để quản lý log
+                                                                            //.Enrich.FromLogContext() // Thêm thông tin context vào log
+    .CreateLogger();
+
+// Đăng ký Serilog với ứng dụng
+builder.Host.UseSerilog();
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    await DataSeeder.SeedAsync(serviceProvider);
+}
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

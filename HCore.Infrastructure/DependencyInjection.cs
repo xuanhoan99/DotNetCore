@@ -1,6 +1,6 @@
-﻿
-
-using HCore.Domain;
+﻿using HCore.Domain;
+using HCore.Domain.Entities;
+using HCore.Infrastructure.Logging;
 using HCore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,7 @@ namespace HCore.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // Đăng ký ASP.NET Identity
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<User, IdentityRole>(options =>
             {
                 // Cấu hình Identity nếu cần
                 options.Password.RequiredLength = 6;
@@ -27,6 +27,7 @@ namespace HCore.Infrastructure
             .AddDefaultTokenProviders();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<SerilogLogger>(); // Đăng ký Logger như 1 Service Singleton
 
             return services;
         }
