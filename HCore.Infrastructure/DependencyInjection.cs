@@ -17,7 +17,7 @@ namespace HCore.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // Đăng ký ASP.NET Identity
-            services.AddIdentity<User, IdentityRole>(options =>
+            services.AddIdentity<User, Role>(options =>
             {
                 // Cấu hình Identity nếu cần
                 options.Password.RequiredLength = 6;

@@ -13,7 +13,7 @@ namespace HCore.Infrastructure.Persistence
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
             Log.Information("🔄 Đang chạy Seed Data...");
             // Đảm bảo database đã được tạo
             await context.Database.MigrateAsync();
@@ -27,11 +27,11 @@ namespace HCore.Infrastructure.Persistence
             Log.Information("🎉 Seed Data hoàn tất!");
         }
 
-        private static async Task EnsureRoleExists(RoleManager<IdentityRole> roleManager, string roleName)
+        private static async Task EnsureRoleExists(RoleManager<Role> roleManager, string roleName)
         {
             if (!await roleManager.RoleExistsAsync(roleName))
             {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
+                await roleManager.CreateAsync(new Role(roleName));
             }
         }
 
