@@ -1,26 +1,27 @@
 ﻿using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.Roles.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HCore.API.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class RolesController : ControllerBase
     {
         private readonly IRoleService _roleService;
 
-        public RoleController(IRoleService roleService)
+        public RolesController(IRoleService roleService)
         {
             _roleService = roleService;
         }
         [HttpPost]
-        public async Task<IActionResult> RoleIns([FromBody] RoleInsInputDto role)
+        public async Task<IActionResult> Create([FromBody] RoleInsInputDto role)
         {
             var result = await _roleService.RoleIns(role);
             if (result.Succeeded)
             {
-                return CreatedAtAction(nameof(RoleById), role);
+                return CreatedAtAction(nameof(GetById), role);
             }
             else
             {
@@ -28,14 +29,19 @@ namespace HCore.API.Controllers
             }
 
         }
-        [HttpGet]
-        public async Task<IActionResult> RoleById(string id)
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetById(string id)
         {
             var result = await _roleService.RoleById(id);
+            if (result == null)
+            {
+                return NotFound(new { message = "Role not found" });
+            }
             return Ok(result);
         }
-        [HttpPut]
-        public async Task<IActionResult> RoleUpd([FromBody] RoleInputDto role)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] RoleInputDto role)
         {
             var result = await _roleService.RoleUpd(role);
             if (result.Succeeded)
@@ -48,21 +54,21 @@ namespace HCore.API.Controllers
             }
 
         }
-        [HttpDelete]
-        public async Task<IActionResult> RoleDel(string id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _roleService.RoleDel(id);
             if (result.Succeeded)
             {
-                return Ok();
+                return NoContent();
             }
             else
             {
                 return BadRequest(result.Errors);
             }
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAllRole()
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
         {
             var result = await _roleService.GetAllRole();
             return Ok(result);
