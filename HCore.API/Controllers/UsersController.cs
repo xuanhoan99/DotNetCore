@@ -1,5 +1,5 @@
-﻿using HCore.Application.Modules.Roles.Dtos;
-using HCore.Application.Modules.Roles.Interfaces;
+﻿using HCore.Application.Modules.Users.Dtos;
+using HCore.Application.Modules.Users.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,42 +7,42 @@ namespace HCore.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly IRoleService _roleService;
+        private readonly IUserService _userService;
 
-        public RolesController(IRoleService roleService)
+        public UsersController(IUserService userService)
         {
-            _roleService = roleService;
+            _userService = userService;
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RoleInsInputDto roleInsInputDto)
+        public async Task<IActionResult> Create([FromBody] UserDto userDto)
         {
-            var role = await _roleService.RoleIns(roleInsInputDto);
+            var user = await _userService.Create(userDto);
 
-            if (role == null)
+            if (user == null)
             {
                 return BadRequest();
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = role!.Id }, role);
+            return CreatedAtAction(nameof(GetById), new { id = user!.Id }, user);
 
         }
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetById(string id)
         {
-            var result = await _roleService.RoleById(id);
+            var result = await _userService.GetById(id);
             if (result == null)
             {
-                return NotFound(new { message = "Role not found" });
+                return NotFound(new { message = "User not found" });
             }
             return Ok(result);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] RoleInputDto role)
+        public async Task<IActionResult> Update(string id, [FromBody] UserDto user)
         {
-            var result = await _roleService.RoleUpd(id, role);
+            var result = await _userService.Update(id, user);
             if (result.Succeeded)
             {
                 return NoContent();
@@ -56,7 +56,7 @@ namespace HCore.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var result = await _roleService.RoleDel(id);
+            var result = await _userService.Delete(id);
             if (result.Succeeded)
             {
                 return NoContent();
@@ -69,7 +69,7 @@ namespace HCore.API.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _roleService.GetAllRole();
+            var result = await _userService.GetAllUser();
             return Ok(result);
         }
     }

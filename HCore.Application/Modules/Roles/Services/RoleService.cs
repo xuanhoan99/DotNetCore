@@ -41,7 +41,7 @@ namespace HCore.Application.Modules.Roles.Services
 
         }
 
-        public async Task<IdentityResult> RoleIns(RoleInsInputDto input)
+        public async Task<RoleOuputDto> RoleIns(RoleInsInputDto input)
         {
             var role = new Role()
             {
@@ -49,7 +49,20 @@ namespace HCore.Application.Modules.Roles.Services
                 NormalizedName = input.Name.ToUpper(),
                 Desc = input.Desc
             };
-            return await _roleManager.CreateAsync(role);
+            var result = await _roleManager.CreateAsync(role);
+            if (!result.Succeeded)
+            {
+                return null;
+            }
+
+            var roleOuputDto = new RoleOuputDto
+            {
+                Id = role.Id,
+                Name = role.Name,
+                Desc = input.Desc
+            };
+
+            return roleOuputDto;
         }
 
         public async Task<List<RoleOuputDto>> GetAllRole()
@@ -63,9 +76,9 @@ namespace HCore.Application.Modules.Roles.Services
             return roles;
         }
 
-        public async Task<IdentityResult> RoleUpd(RoleInputDto input)
+        public async Task<IdentityResult> RoleUpd(string id, RoleInputDto input)
         {
-            var role = await _roleManager.FindByIdAsync(input.Id);
+            var role = await _roleManager.FindByIdAsync(id);
             role.Name = input.Name;
             role.NormalizedName = input.Name.ToUpper();
             role.Desc = input.Desc;
