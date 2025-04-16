@@ -1,57 +1,39 @@
 ﻿namespace HCore.Domain.Common
 {
-    public interface IDeletedEntity
+    public interface IEntity<TId>
+    {
+        TId Id { get; }
+    }
+    public interface IDeletedEntity<TId> : IEntity<TId>
     {
         bool IsDeleted { get; }
-        void SoftDelete();
     }
 
-    public interface IAuditEntity
+    public interface IAuditEntity<TId> : IDeletedEntity<TId>
     {
         string CreatedBy { get; }
         DateTime CreatedAt { get; }
         string? ApprovedBy { get; }
         DateTime? ApprovedAt { get; }
         string ApprovalStatus { get; }
-
-        void Approve(string approvedBy, string approvalStatus);
     }
 
-    public abstract class DeletedEntityBase : IDeletedEntity
+    public abstract class EntityBase<TId> : IEntity<TId>
     {
-        public bool IsDeleted { get; private set; }
-
-        protected DeletedEntityBase()
-        {
-            IsDeleted = false;
-        }
-
-        public void SoftDelete()
-        {
-            IsDeleted = true;
-        }
+        public virtual TId Id { get; set; }
     }
-    public abstract class AuditEntityBase : DeletedEntityBase, IAuditEntity
+
+    public abstract class DeletedEntityBase<TId> : EntityBase<TId>, IDeletedEntity<TId>
     {
-        public string CreatedBy { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public string? ApprovedBy { get; private set; }
-        public DateTime? ApprovedAt { get; private set; }
-        public string ApprovalStatus { get; private set; }
-
-        protected AuditEntityBase(string createdBy)
-        {
-            CreatedBy = createdBy;
-            CreatedAt = DateTime.UtcNow;
-            ApprovalStatus = "Pending";
-        }
-
-        public void Approve(string approvedBy, string approvalStatus)
-        {
-            ApprovedBy = approvedBy;
-            ApprovedAt = DateTime.UtcNow;
-            ApprovalStatus = approvalStatus;
-        }
+        public bool IsDeleted { get; set; }
+    }
+    public abstract class AuditEntityBase<TId> : DeletedEntityBase<TId>, IAuditEntity<TId>
+    {
+        public string CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string? ApprovedBy { get; set; }
+        public DateTime? ApprovedAt { get; set; }
+        public string ApprovalStatus { get; set; }
     }
 
 }

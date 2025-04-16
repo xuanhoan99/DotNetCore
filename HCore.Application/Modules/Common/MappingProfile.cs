@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using HCore.Application.Modules.SysMenus.Dtos;
+using HCore.Domain.Entities;
 
 namespace HCore.Application.Modules.Common
 {
@@ -6,6 +8,7 @@ namespace HCore.Application.Modules.Common
     {
         public MappingProfile()
         {
+            CreateMap<SysMenu, SysMenuDto>().ReverseMap();
         }
     }
 }

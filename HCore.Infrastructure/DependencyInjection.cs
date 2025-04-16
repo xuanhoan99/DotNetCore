@@ -1,7 +1,8 @@
-﻿using HCore.Domain;
-using HCore.Domain.Entities;
+﻿using HCore.Domain.Entities;
+using HCore.Domain.Repositories;
 using HCore.Infrastructure.Logging;
 using HCore.Infrastructure.Persistence;
+using HCore.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,12 +22,18 @@ namespace HCore.Infrastructure
             {
                 // Cấu hình Identity nếu cần
                 options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
+
                 // ...
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             services.AddSingleton<SerilogLogger>(); // Đăng ký Logger như 1 Service Singleton
 
             return services;

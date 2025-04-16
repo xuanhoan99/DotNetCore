@@ -21,8 +21,4 @@
     <ProjectReference Include="..\HCore.Domain\HCore.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Persistence\Repositories\" />
-  </ItemGroup>
-
 </Project>

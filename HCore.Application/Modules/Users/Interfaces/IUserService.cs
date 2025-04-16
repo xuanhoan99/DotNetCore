@@ -10,5 +10,6 @@ namespace HCore.Application.Modules.Users.Interfaces
         Task<List<UserResponseDto>> GetAllUser();
         Task<UserResponseDto> GetById(string id);
         Task<IdentityResult> Update(string id, UserDto input);
+        string? UserName { get; }
     }
 }
