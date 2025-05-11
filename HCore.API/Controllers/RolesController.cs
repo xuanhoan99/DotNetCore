@@ -1,5 +1,7 @@
-﻿using HCore.Application.Modules.Roles.Dtos;
+﻿using HCore.Application.Modules.Common;
+using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.Roles.Interfaces;
+using HCore.Application.Modules.SysMenus.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -70,6 +72,28 @@ namespace HCore.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _roleService.GetAllRole();
+            return Ok(result);
+        }
+        [HttpGet("Permission/{id}")]
+        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetPermissionById(string id)
+        {
+            var result = await _roleService.GetPermissionById(id);
+            if (!result.Success)
+                return NotFound(result);
+
+            return Ok(result);
+        }
+        [HttpPut("Permission")]
+        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdatePermision([FromBody] RoloPermissionDto input)
+        {
+            var result = await _roleService.UpdatePermision(input);
+            if (!result.Success)
+                return NotFound(result);
+
             return Ok(result);
         }
     }

@@ -1,4 +1,5 @@
-﻿using HCore.Application.Modules.Common;
+﻿using HCore.Application.Modules.Auth.Services;
+using HCore.Application.Modules.Common;
 using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Application.Modules.SysMenus.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ namespace HCore.API.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status400BadRequest)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.Create)]
         public async Task<IActionResult> Create([FromBody] SysMenuDto sysMenuDto)
         {
             var result = await _sysMenuService.Create(sysMenuDto);
@@ -64,6 +66,7 @@ namespace HCore.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(BaseResponse<List<SysMenuDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<List<SysMenuDto>>), StatusCodes.Status404NotFound)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.Search)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _sysMenuService.GetAll();

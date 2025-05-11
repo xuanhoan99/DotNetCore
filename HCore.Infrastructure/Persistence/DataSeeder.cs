@@ -47,6 +47,7 @@ namespace HCore.Infrastructure.Persistence
                 var newAdmin = new User
                 {
                     UserName = userName,
+                    Name = "Admin",
                     Email = adminEmail,
                     EmailConfirmed = true
                 };

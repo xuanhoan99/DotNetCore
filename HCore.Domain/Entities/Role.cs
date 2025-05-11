@@ -2,7 +2,7 @@
 
 namespace HCore.Domain.Entities
 {
-    public class Role : IdentityRole
+    public class Role : IdentityRole<int>
     {
         public string? Desc { get; set; }
         public Role() : base() { }

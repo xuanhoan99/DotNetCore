@@ -2,6 +2,9 @@
 using HCore.Application.Modules.Auth.Interfaces;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -54,7 +57,7 @@ namespace HCore.Application.Modules.Auth.Services
 
             var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.UserName)
         };
 
@@ -76,5 +79,6 @@ namespace HCore.Application.Modules.Auth.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }
