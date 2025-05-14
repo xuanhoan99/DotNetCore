@@ -1,15 +1,16 @@
-﻿using HCore.Application.Modules.Users.Dtos;
+﻿using HCore.Application.Modules.Common.Responses;
+using HCore.Application.Modules.Users.Dtos;
 using Microsoft.AspNetCore.Identity;
 
 namespace HCore.Application.Modules.Users.Interfaces
 {
     public interface IUserService
     {
-        Task<UserResponseDto> Create(UserDto input);
-        Task<IdentityResult> Delete(string id);
-        Task<List<UserResponseDto>> GetAllUser();
-        Task<UserResponseDto> GetById(string id);
-        Task<IdentityResult> Update(string id, UserDto input);
+        Task<BaseResponse<UserResponseDto>> Create(UserDto input);
+        Task<BaseResponse<bool>> Delete(string id);
+        Task<BaseResponse<List<UserResponseDto>>> GetAllUser();
+        Task<BaseResponse<UserResponseDto>> GetById(string id);
+        Task<BaseResponse<UserResponseDto>> Update(string id, UserDto input);
         string? UserName { get; }
     }
 }

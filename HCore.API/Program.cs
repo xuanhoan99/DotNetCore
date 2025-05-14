@@ -1,4 +1,6 @@
-﻿using HCore.Application;
+﻿using HCore.API.Extensions;
+using HCore.API.Filters;
+using HCore.Application;
 using HCore.Application.Modules.Auth.Services;
 using HCore.Infrastructure;
 using HCore.Infrastructure.Persistence;
@@ -52,7 +54,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo() { Title = "HCore API", Version = "v1" });
-    // Thêm cấu hình bảo mật cho Swagger
+    options.OperationFilter<HCoreProducesResponseFilter>();
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Nhập token theo định dạng: Bearer {your_token}",
@@ -108,6 +110,8 @@ if (app.Environment.IsDevelopment())
         options.DocumentTitle = "HCore API Documentation";
     }); //URL: /swagger
 }
+
+app.UseHCoreExceptionMiddleware(); // đặt sớm trong pipeline
 
 app.UseHttpsRedirection();
 

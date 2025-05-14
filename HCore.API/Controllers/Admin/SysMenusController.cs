@@ -1,10 +1,10 @@
 ﻿using HCore.Application.Modules.Auth.Services;
-using HCore.Application.Modules.Common;
+using HCore.Application.Modules.Common.Constants;
 using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Application.Modules.SysMenus.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HCore.API.Controllers
+namespace HCore.API.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,8 +17,6 @@ namespace HCore.API.Controllers
             _sysMenuService = userService;
         }
         [HttpPost]
-        [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status400BadRequest)]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.Create)]
         public async Task<IActionResult> Create([FromBody] SysMenuDto sysMenuDto)
         {
@@ -30,8 +28,7 @@ namespace HCore.API.Controllers
 
         }
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status404NotFound)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.View)]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _sysMenuService.GetById(id);
@@ -41,8 +38,7 @@ namespace HCore.API.Controllers
             return Ok(result);
         }
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<SysMenuDto>), StatusCodes.Status404NotFound)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.Update)]
         public async Task<IActionResult> Update(int id, [FromBody] SysMenuDto sysMenuDto)
         {
             var result = await _sysMenuService.Update(id, sysMenuDto);
@@ -53,8 +49,7 @@ namespace HCore.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.Delete)]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _sysMenuService.Delete(id);
@@ -64,8 +59,6 @@ namespace HCore.API.Controllers
             return Ok(result);
         }
         [HttpGet]
-        [ProducesResponseType(typeof(BaseResponse<List<SysMenuDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<List<SysMenuDto>>), StatusCodes.Status404NotFound)]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.Search)]
         public async Task<IActionResult> GetAll()
         {
@@ -76,8 +69,7 @@ namespace HCore.API.Controllers
             return Ok(result);
         }
         [HttpPost("search")]
-        [ProducesResponseType(typeof(PagedResponse<SysMenuDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(PagedResponse<SysMenuDto>), StatusCodes.Status404NotFound)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.SysMenu, HCorePermissions.Action.Search)]
         public async Task<IActionResult> Search([FromBody] SysMenuSearchInput input)
         {
             var result = await _sysMenuService.Search(input);

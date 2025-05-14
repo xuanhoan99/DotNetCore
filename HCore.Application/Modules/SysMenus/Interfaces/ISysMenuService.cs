@@ -1,4 +1,4 @@
-﻿using HCore.Application.Modules.Common;
+﻿using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.SysMenus.Dtos;
 
 namespace HCore.Application.Modules.SysMenus.Interfaces

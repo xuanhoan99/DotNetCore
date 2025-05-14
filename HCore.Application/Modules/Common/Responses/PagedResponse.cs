@@ -1,4 +1,4 @@
-﻿namespace HCore.Application.Modules.Common
+﻿namespace HCore.Application.Modules.Common.Responses
 {
     public class PagedResponse<T> : BaseResponse<List<T>>
     {

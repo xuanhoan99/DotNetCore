@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HCore.Application.Modules.Common
+﻿namespace HCore.Application.Modules.Common.Constants
 {
     public static class HCorePermissions
     {
@@ -16,6 +10,8 @@ namespace HCore.Application.Modules.Common
         public class Page
         {
             public const string SysMenu = "SysMenu";
+            public const string User = "User";
+            public const string Role = "Role";
         }
         public class Action
         {

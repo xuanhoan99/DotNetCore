@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HCore.Application.Modules.Common;
+using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Application.Modules.SysMenus.Interfaces;
 using HCore.Application.Modules.Users.Interfaces;

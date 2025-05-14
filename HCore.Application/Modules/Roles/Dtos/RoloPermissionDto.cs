@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HCore.Application.Modules.Roles.Dtos
+﻿namespace HCore.Application.Modules.Roles.Dtos
 {
     public class RoloPermissionDto
     {
         public string RoleId { get; set; }
-        public IList<RoleClaimsDto> RoleClaims { get; set; }        
+        public IList<RoleClaimsDto> RoleClaims { get; set; }
     }
     public class RoleClaimsDto
     {

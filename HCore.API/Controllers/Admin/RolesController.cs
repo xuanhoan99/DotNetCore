@@ -1,11 +1,14 @@
-﻿using HCore.Application.Modules.Common;
+﻿using HCore.Application.Modules.Auth.Services;
+using HCore.Application.Modules.Common.Constants;
+using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.Roles.Interfaces;
-using HCore.Application.Modules.SysMenus.Dtos;
+using HCore.Application.Modules.Users.Dtos;
+using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HCore.API.Controllers
+namespace HCore.API.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,65 +21,68 @@ namespace HCore.API.Controllers
             _roleService = roleService;
         }
         [HttpPost]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Create)]
         public async Task<IActionResult> Create([FromBody] RoleInsInputDto roleInsInputDto)
         {
-            var role = await _roleService.RoleIns(roleInsInputDto);
+            var result = await _roleService.Create(roleInsInputDto);
 
-            if (role == null)
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result);
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = role!.Id }, role);
+            return CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result);
 
         }
         [HttpGet("{id}")]
-        [Authorize]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
         public async Task<IActionResult> GetById(string id)
         {
-            var result = await _roleService.RoleById(id);
-            if (result == null)
+            var result = await _roleService.GetById(id);
+
+            if (!result.Success)
             {
-                return NotFound(new { message = "Role not found" });
+                return NotFound(result);
             }
+
             return Ok(result);
         }
         [HttpPut("{id}")]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
         public async Task<IActionResult> Update(string id, [FromBody] RoleInputDto role)
         {
-            var result = await _roleService.RoleUpd(id, role);
-            if (result.Succeeded)
+            var result = await _roleService.Update(id, role);
+
+            if (!result.Success)
             {
-                return NoContent();
+                return BadRequest(result);
             }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
+
+            return Ok(result);
 
         }
         [HttpDelete("{id}")]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Delete)]
         public async Task<IActionResult> Delete(string id)
         {
-            var result = await _roleService.RoleDel(id);
-            if (result.Succeeded)
+            var result = await _roleService.Delete(id);
+
+            if (!result.Success)
             {
-                return NoContent();
+                return BadRequest(result);
             }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
+
+            return Ok(result);
         }
         [HttpGet("all")]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Search)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _roleService.GetAllRole();
             return Ok(result);
         }
         [HttpGet("Permission/{id}")]
-        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status404NotFound)]
+        //[HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
         public async Task<IActionResult> GetPermissionById(string id)
         {
             var result = await _roleService.GetPermissionById(id);
@@ -86,8 +92,7 @@ namespace HCore.API.Controllers
             return Ok(result);
         }
         [HttpPut("Permission")]
-        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<RoloPermissionDto>), StatusCodes.Status404NotFound)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
         public async Task<IActionResult> UpdatePermision([FromBody] RoloPermissionDto input)
         {
             var result = await _roleService.UpdatePermision(input);

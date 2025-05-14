@@ -1,11 +1,11 @@
-﻿using HCore.Domain.Entities;
+﻿using HCore.Application.Modules.Common.Responses;
+using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace HCore.Application.Modules.Auth.Services
 {
@@ -16,7 +16,7 @@ namespace HCore.Application.Modules.Auth.Services
         private readonly RoleManager<Role> _roleManager;
 
 
-        public HCoreAuthorizeFilter(IHttpContextAccessor httpContextAccessor,RoleManager<Role> roleManager, UserManager<User> userManager)
+        public HCoreAuthorizeFilter(IHttpContextAccessor httpContextAccessor, RoleManager<Role> roleManager, UserManager<User> userManager)
         {
             _httpContextAccessor = httpContextAccessor;
             _roleManager = roleManager;
@@ -35,7 +35,10 @@ namespace HCore.Application.Modules.Auth.Services
                 var userPermissions = await GetAllClaimsForUserAsync();
                 if (!attribute.Permissions.Any(p => userPermissions.Contains(p)))
                 {
-                    context.Result = new ForbidResult("Permission denied");
+                    context.Result = new JsonResult(BaseResponse<string>.Fail("Permission denied"))
+                    {
+                        StatusCode = StatusCodes.Status403Forbidden
+                    };
                 }
             }
         }
@@ -75,5 +78,5 @@ namespace HCore.Application.Modules.Auth.Services
             return permissions;
         }
     }
-    
+
 }

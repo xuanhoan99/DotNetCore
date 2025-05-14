@@ -1,14 +1,15 @@
-﻿using AutoMapper.Internal.Mappers;
-using HCore.Application.Modules.Common;
+﻿using AutoMapper;
+using HCore.Application.Modules.Common.Constants;
+using HCore.Application.Modules.Common.Helpers;
+using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.Roles.Interfaces;
-using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Application.Modules.SysMenus.Interfaces;
+using HCore.Application.Modules.Users.Dtos;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using System.Security;
 
 namespace HCore.Application.Modules.Roles.Services
 {
@@ -16,81 +17,76 @@ namespace HCore.Application.Modules.Roles.Services
     {
         private readonly RoleManager<Role> _roleManager;
         private readonly ISysMenuService _sysMenuService;
-        public RoleService(RoleManager<Role> roleManager,ISysMenuService sysMenuService)
+        private readonly IMapper _mapper;
+        public RoleService(RoleManager<Role> roleManager, ISysMenuService sysMenuService, IMapper mapper)
         {
             _roleManager = roleManager;
             _sysMenuService = sysMenuService;
+            _mapper = mapper;
         }
 
-        public async Task<RoleOuputDto> RoleById(string id)
+        public async Task<BaseResponse<RoleOuputDto>> Create(RoleInsInputDto input)
         {
-            RoleOuputDto roleOuputDto;
-            var role = await _roleManager.FindByIdAsync(id);
-            if (role == null)
-            {
-                roleOuputDto = new RoleOuputDto();
-            }
-            else
-            {
-                roleOuputDto = new RoleOuputDto()
-                {
-                    Id = role.Id,
-                    Name = role.Name,
-                    Desc = role.Desc
-                };
-            }
-            return roleOuputDto;
-        }
-
-        public async Task<IdentityResult> RoleDel(string id)
-        {
-            var role = await _roleManager.FindByIdAsync(id);
-            return await _roleManager.DeleteAsync(role);
-
-        }
-
-        public async Task<RoleOuputDto> RoleIns(RoleInsInputDto input)
-        {
-            var role = new Role()
-            {
-                Name = input.Name,
-                NormalizedName = input.Name.ToUpper(),
-                Desc = input.Desc
-            };
+            var role = _mapper.Map<Role>(input);
             var result = await _roleManager.CreateAsync(role);
             if (!result.Succeeded)
             {
-                return null;
+                var errorMessages = result.Errors.Select(e => e.Description).ToList();
+                return BaseResponse<RoleOuputDto>.Fail(string.Join("; ", errorMessages));
             }
 
-            var roleOuputDto = new RoleOuputDto
-            {
-                Id = role.Id,
-                Name = role.Name,
-                Desc = input.Desc
-            };
-
-            return roleOuputDto;
+            var roleResponse = _mapper.Map<RoleOuputDto>(role);
+            return BaseResponse<RoleOuputDto>.Ok(roleResponse, "Create successfully");
         }
 
-        public async Task<List<RoleOuputDto>> GetAllRole()
-        {
-            var roles = await _roleManager.Roles.Select(s => new RoleOuputDto()
-            {
-                Id = s.Id,
-                Desc = s.Desc,
-                Name = s.Name
-            }).ToListAsync();
-            return roles;
-        }
-
-        public async Task<IdentityResult> RoleUpd(string id, RoleInputDto input)
+        public async Task<BaseResponse<bool>> Delete(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
-            role.Name = input.Name;
-            role.NormalizedName = input.Name.ToUpper();
-            role.Desc = input.Desc;
-            return await _roleManager.UpdateAsync(role);
+            if (role == null)
+                return BaseResponse<bool>.Fail("Role not found");
+
+            var result = await _roleManager.DeleteAsync(role);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return BaseResponse<bool>.Fail(string.Join("; ", errors));
+            }
+
+            return BaseResponse<bool>.Ok(true, "Delete successfully");
+
+        }
+
+        public async Task<BaseResponse<List<RoleOuputDto>>> GetAllRole()
+        {
+            var roles = await _roleManager.Roles.ToListAsync();
+            var result = _mapper.Map<List<RoleOuputDto>>(roles);
+            return BaseResponse<List<RoleOuputDto>>.Ok(result, "Get all roles successfully");
+        }
+
+        public async Task<BaseResponse<RoleOuputDto>> GetById(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+                return BaseResponse<RoleOuputDto>.Fail("Role not found");
+
+            var result = _mapper.Map<RoleOuputDto>(role);
+            return BaseResponse<RoleOuputDto>.Ok(result, "Get role successfully");           
+        }
+
+        public async Task<BaseResponse<RoleOuputDto>> Update(string id, RoleInputDto input)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+                return BaseResponse<RoleOuputDto>.Fail("Role not found");
+
+            _mapper.Map(input, role); // ánh xạ các trường từ input sang entity
+
+            var result = await _roleManager.UpdateAsync(role);
+            if (!result.Succeeded)
+                return BaseResponse<RoleOuputDto>.Fail("Update failed: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            var updatedRole = _mapper.Map<RoleOuputDto>(role);
+            return BaseResponse<RoleOuputDto>.Ok(updatedRole, "Update successfully");
         }
 
         public async Task<BaseResponse<RoloPermissionDto>> GetPermissionById(string roleId)

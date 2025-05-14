@@ -1,16 +1,11 @@
-﻿using HCore.Application.Modules.Roles.Dtos;
+﻿using HCore.Application.Modules.Common.Constants;
+using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HCore.Application.Modules.Common
+namespace HCore.Application.Modules.Common.Helpers
 {
     public static class ClaimsHelper
     {

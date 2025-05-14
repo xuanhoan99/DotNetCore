@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HCore.Application.Modules.Auth.Services
+﻿namespace HCore.Application.Modules.Auth.Services
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class HCoreAuthorizeAttribute : Attribute

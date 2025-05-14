@@ -1,8 +1,9 @@
 ﻿using HCore.Application.Modules.Auth.Dtos;
 using HCore.Application.Modules.Auth.Interfaces;
+using HCore.Application.Modules.Roles.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HCore.API.Controllers
+namespace HCore.API.Controllers.Auth
 {
     [Route("api/auth")]
     [ApiController]
@@ -19,10 +20,11 @@ namespace HCore.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
             var result = await _authService.LoginAsync(request);
-            if (string.IsNullOrEmpty(result.Token))
+            if (!result.Success)
             {
-                return Unauthorized(result.Message);
+                return Unauthorized(result);
             }
+
             return Ok(result);
         }
     }

@@ -1,10 +1,9 @@
 ﻿using HCore.Application.Modules.Auth.Dtos;
 using HCore.Application.Modules.Auth.Interfaces;
+using HCore.Application.Modules.Common.Responses;
+using HCore.Application.Modules.Roles.Dtos;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -29,26 +28,26 @@ namespace HCore.Application.Modules.Auth.Services
             _configuration = configuration;
         }
 
-        public async Task<AuthResponseDto> LoginAsync(LoginRequestDto request)
+        public async Task<BaseResponse<AuthResponseDto>> LoginAsync(LoginRequestDto request)
         {
-            // 1️⃣ Kiểm tra user có tồn tại không
             var user = await _userManager.FindByNameAsync(request.Username);
             if (user == null)
             {
-                return new AuthResponseDto { Message = "Invalid username or password" };
+                return BaseResponse<AuthResponseDto>.Fail("Invalid username or password");
             }
 
-            // 2️⃣ Kiểm tra password
-            var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, false);
-            if (!result.Succeeded)
+            var login = await _signInManager.PasswordSignInAsync(user, request.Password, false, false);
+            if (!login.Succeeded)
             {
-                return new AuthResponseDto { Message = "Invalid username or password" };
+                return BaseResponse<AuthResponseDto>.Fail("Invalid username or password");
             }
 
-            // 3️⃣ Sinh JWT Token
             var token = await GenerateToken(user);
-
-            return new AuthResponseDto { Token = token, Message = "Login successful" };
+            var result = new AuthResponseDto
+            {
+                Token = token
+            };
+            return BaseResponse<AuthResponseDto>.Ok(result, "Login successful");
         }
 
         private async Task<string> GenerateToken(User user)
