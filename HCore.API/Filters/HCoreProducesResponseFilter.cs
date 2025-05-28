@@ -21,9 +21,6 @@ namespace HCore.API.Filters
                     }
                 }
             });
-
-            operation.Responses.TryAdd("400", new OpenApiResponse { Description = "Bad Request" });
-            operation.Responses.TryAdd("404", new OpenApiResponse { Description = "Not Found" });
         }
     }
 

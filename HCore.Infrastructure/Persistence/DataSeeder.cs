@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using System.Data;
-using System.Reflection;
-using System.Security;
 using System.Security.Claims;
 
 namespace HCore.Infrastructure.Persistence
@@ -54,7 +51,8 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedBy = "admin",
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
-                    IsDeleted = false
+                    IsDeleted = false,
+                    PermissionName = "Pages.Main.Dashboard"
                 },
                 new SysMenu
                 {
@@ -69,7 +67,8 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedBy = "admin",
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
-                    IsDeleted = false
+                    IsDeleted = false,
+                    PermissionName = "Pages.Main.SystemManager"
                 },
                 new SysMenu
                 {
@@ -84,7 +83,8 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedBy = "admin",
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
-                    IsDeleted = false
+                    IsDeleted = false,
+                    PermissionName = "Pages.Main.User"
                 },
                 new SysMenu
                 {
@@ -99,7 +99,8 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedBy = "admin",
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
-                    IsDeleted = false
+                    IsDeleted = false,
+                    PermissionName = "Pages.Main.SysMenu"
                 },
                 new SysMenu
                 {
@@ -107,16 +108,17 @@ namespace HCore.Infrastructure.Persistence
                     EnglishName = "Role",
                     Url = "/app/admin/Roles",
                     Order = 3,
-                    ParentId = 2, 
+                    ParentId = 2,
                     Icon = "shield",
                     CreatedBy = "system",
                     CreatedAt = now,
                     ApprovedBy = "admin",
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
-                    IsDeleted = false
+                    IsDeleted = false,
+                    PermissionName = "Pages.Main.Role"
                 }
-            };            
+            };
 
             await context.SysMenus.AddRangeAsync(menus);
             await context.SaveChangesAsync();

@@ -1,8 +1,8 @@
 ﻿using HCore.Application.Modules.Auth.Services;
 using HCore.Application.Modules.Common.Constants;
+using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.Users.Dtos;
 using HCore.Application.Modules.Users.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HCore.API.Controllers.Admin
@@ -19,63 +19,39 @@ namespace HCore.API.Controllers.Admin
         }
         [HttpPost]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.User, HCorePermissions.Action.Create)]
-        public async Task<IActionResult> Create([FromBody] UserDto userDto)
+        public async Task<BaseResponse<UserResponseDto>> Create([FromBody] UserDto userDto)
         {
             var result = await _userService.Create(userDto);
-
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result);
+            return result;
         }
 
         [HttpGet("{id}")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.User, HCorePermissions.Action.View)]
-        public async Task<IActionResult> GetById(string id)
+        public async Task<BaseResponse<UserResponseDto>> GetById(string id)
         {
             var result = await _userService.GetById(id);
-
-            if (!result.Success)
-            {
-                return NotFound(result);
-            }
-
-            return Ok(result);
+            return result;
         }
         [HttpPut("{id}")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.User, HCorePermissions.Action.Update)]
-        public async Task<IActionResult> Update(string id, [FromBody] UserDto user)
+        public async Task<BaseResponse<UserResponseDto>> Update(string id, [FromBody] UserDto user)
         {
             var result = await _userService.Update(id, user);
-
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
+            return result;
         }
         [HttpDelete("{id}")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.User, HCorePermissions.Action.Delete)]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<BaseResponse<bool>> Delete(string id)
         {
             var result = await _userService.Delete(id);
-
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
+            return result;
         }
         [HttpGet("all")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.User, HCorePermissions.Action.Search)]
-        public async Task<IActionResult> GetAll()
+        public async Task<BaseResponse<List<UserResponseDto>>> GetAll()
         {
             var result = await _userService.GetAllUser();
-            return Ok(result);
+            return result;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace HCore.Application.Modules.Common.Helpers
                 var permissionName = $"{HCorePermissions.Prefix.Main}.{item.EnglishName}";
                 var permissions = item.ParentId == null
                             ? new[] { permissionName }
-                            : actions.Select(action => $"{permissionName}.{action}");
+                            : actions.Select(action => $"{permissionName}.{action}").Append(permissionName);
 
                 allPermissions.AddRange(permissions.Select(p => new RoleClaimsDto
                 {

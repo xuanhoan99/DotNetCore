@@ -15,5 +15,6 @@
         public DateTime? ApprovedAt { get; set; }
         public string ApprovalStatus { get; set; }
         public bool IsDeleted { get; set; }
+        public string PermissionName { get; set; }
     }
 }

@@ -5,7 +5,6 @@ using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.Roles.Interfaces;
 using HCore.Application.Modules.SysMenus.Interfaces;
-using HCore.Application.Modules.Users.Dtos;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +69,7 @@ namespace HCore.Application.Modules.Roles.Services
                 return BaseResponse<RoleOuputDto>.Fail("Role not found");
 
             var result = _mapper.Map<RoleOuputDto>(role);
-            return BaseResponse<RoleOuputDto>.Ok(result, "Get role successfully");           
+            return BaseResponse<RoleOuputDto>.Ok(result, "Get role successfully");
         }
 
         public async Task<BaseResponse<RoleOuputDto>> Update(string id, RoleInputDto input)

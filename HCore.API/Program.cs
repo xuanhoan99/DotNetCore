@@ -12,7 +12,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// 1. Đăng ký CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDevClient", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // nếu dùng cookie hoặc token trong header
+    });
+});
 // ??ng ký các d?ch v? trong Application và Infrastructure
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -54,6 +64,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo() { Title = "HCore API", Version = "v1" });
+    options.DocInclusionPredicate((docName, description) => true);
     options.OperationFilter<HCoreProducesResponseFilter>();
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -98,7 +109,7 @@ using (var scope = app.Services.CreateScope())
     await DataSeeder.SeedAsync(serviceProvider);
 }
 
-
+app.UseCors("AllowAngularDevClient");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

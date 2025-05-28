@@ -15,7 +15,7 @@ namespace HCore.Application.Modules.Users.Services
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public UserService(UserManager<User> userManager, IHttpContextAccessor httpContextAccessor,IMapper mapper)
+        public UserService(UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;

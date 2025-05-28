@@ -1,6 +1,5 @@
 ﻿using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.Users.Dtos;
-using Microsoft.AspNetCore.Identity;
 
 namespace HCore.Application.Modules.Users.Interfaces
 {

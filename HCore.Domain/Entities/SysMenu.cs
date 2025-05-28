@@ -10,5 +10,6 @@ namespace HCore.Domain.Entities
         public int? Order { get; set; }
         public int? ParentId { get; set; }
         public string? Icon { get; set; }
+        public string PermissionName { get; set; }
     }
 }

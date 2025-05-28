@@ -1,6 +1,7 @@
 ﻿using HCore.Application.Modules.Auth.Dtos;
 using HCore.Application.Modules.Auth.Interfaces;
-using HCore.Application.Modules.Roles.Dtos;
+using HCore.Application.Modules.Common.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HCore.API.Controllers.Auth
@@ -17,15 +18,19 @@ namespace HCore.API.Controllers.Auth
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        public async Task<BaseResponse<AuthResponseDto>> Login([FromBody] LoginRequestDto request)
         {
             var result = await _authService.LoginAsync(request);
-            if (!result.Success)
-            {
-                return Unauthorized(result);
-            }
 
-            return Ok(result);
+            return result;
+        }
+
+        [HttpGet("current-user")]
+        [Authorize]
+        public async Task<BaseResponse<GetCurrentLoginInformationsOutput>> GetUserConfiguration()
+        {
+            var result = await _authService.GetUserConfigurationAsync();
+            return result;
         }
     }
 }

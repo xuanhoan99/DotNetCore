@@ -1,26 +1,21 @@
-﻿using HCore.Application.Modules.Common.Responses;
-using HCore.Domain.Entities;
+﻿using HCore.Application.Modules.Auth.Interfaces;
+using HCore.Application.Modules.Common.Responses;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Security.Claims;
 
 namespace HCore.Application.Modules.Auth.Services
 {
     public class HCoreAuthorizeFilter : IAsyncAuthorizationFilter
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly IAuthService _authService;
 
 
-        public HCoreAuthorizeFilter(IHttpContextAccessor httpContextAccessor, RoleManager<Role> roleManager, UserManager<User> userManager)
+        public HCoreAuthorizeFilter(
+            IAuthService authService)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _roleManager = roleManager;
-            _userManager = userManager;
+            _authService = authService;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -32,7 +27,7 @@ namespace HCore.Application.Modules.Auth.Services
 
             if (attribute != null)
             {
-                var userPermissions = await GetAllClaimsForUserAsync();
+                var userPermissions = await _authService.GetAllPermissionsForCurrentUserAsync();
                 if (!attribute.Permissions.Any(p => userPermissions.Contains(p)))
                 {
                     context.Result = new JsonResult(BaseResponse<string>.Fail("Permission denied"))
@@ -41,41 +36,6 @@ namespace HCore.Application.Modules.Auth.Services
                     };
                 }
             }
-        }
-
-        private async Task<List<string>> GetAllClaimsForUserAsync()
-        {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null || !user.Identity.IsAuthenticated)
-                return new List<string>();
-
-            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-                return new List<string>();
-
-            var appUser = await _userManager.FindByIdAsync(userId);
-            if (appUser == null) return new List<string>();
-
-
-            var roleNames = await _userManager.GetRolesAsync(appUser);
-            var roleClaims = new List<Claim>();
-
-            foreach (var roleName in roleNames)
-            {
-                var role = await _roleManager.FindByNameAsync(roleName);
-                if (role != null)
-                {
-                    var claims = await _roleManager.GetClaimsAsync(role);
-                    roleClaims.AddRange(claims);
-                }
-            }
-            var permissions = roleClaims
-                .Where(c => c.Type == "Permission")
-                .Select(c => c.Value)
-                .Distinct()
-                .ToList();
-
-            return permissions;
         }
     }
 
