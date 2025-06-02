@@ -1,5 +1,5 @@
 ﻿using HCore.Application.Modules.Common.Constants;
-using HCore.Application.Modules.Roles.Dtos;
+using HCore.Application.Modules.Permissions.Dtos;
 using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -21,18 +21,19 @@ namespace HCore.Application.Modules.Common.Helpers
                 allPermissions.AddRange(permissions.Select(p => new RoleClaimsDto
                 {
                     Value = p,
-                    Type = "Permissions"
+                    Type = "Permission"
                 }));
             }
         }
 
-        public static async Task AddPermissionClaim(this RoleManager<Role> roleManager, Role role, string permission)
+        public static async Task<IdentityResult> AddPermissionClaim(this RoleManager<Role> roleManager, Role role, string claimType, string claimValue)
         {
             var allClaims = await roleManager.GetClaimsAsync(role);
-            if (!allClaims.Any(a => a.Type == "Permission" && a.Value == permission))
+            if (allClaims.Any(c => c.Type == claimType && c.Value == claimValue))
             {
-                await roleManager.AddClaimAsync(role, new Claim("Permission", permission));
+                return IdentityResult.Success;
             }
+            return await roleManager.AddClaimAsync(role, new Claim(claimType, claimValue));
         }
     }
 }

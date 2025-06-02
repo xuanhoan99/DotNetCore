@@ -1,6 +1,6 @@
-﻿namespace HCore.Application.Modules.Roles.Dtos
+﻿namespace HCore.Application.Modules.Permissions.Dtos
 {
-    public class RoloPermissionDto
+    public class RolePermissionDto
     {
         public string RoleId { get; set; }
         public IList<RoleClaimsDto> RoleClaims { get; set; }

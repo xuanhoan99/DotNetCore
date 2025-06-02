@@ -10,7 +10,5 @@ namespace HCore.Application.Modules.Roles.Interfaces
         Task<BaseResponse<RoleOuputDto>> GetById(string id);
         Task<BaseResponse<bool>> Delete(string id);
         Task<BaseResponse<List<RoleOuputDto>>> GetAllRole();
-        Task<BaseResponse<RoloPermissionDto>> GetPermissionById(string roleId);
-        Task<BaseResponse<RoloPermissionDto>> UpdatePermision(RoloPermissionDto input);
     }
 }

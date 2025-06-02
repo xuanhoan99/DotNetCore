@@ -22,6 +22,25 @@ namespace HCore.API.Middlewares
             try
             {
                 await _next(context);
+                if (!context.Response.HasStarted)
+                {
+                    if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
+                    {
+                        var resp = BaseResponse<string>.Fail("Unauthorized");
+                        var json = JsonSerializer.Serialize(resp);
+                        context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        await context.Response.WriteAsync(json);
+                    }
+                    else if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
+                    {
+                        var resp = BaseResponse<string>.Fail("Permission denied");
+                        var json = JsonSerializer.Serialize(resp);
+                        context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        await context.Response.WriteAsync(json);
+                    }
+                }
             }
             catch (Exception ex)
             {

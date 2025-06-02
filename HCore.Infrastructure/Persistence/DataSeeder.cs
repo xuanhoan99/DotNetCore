@@ -161,7 +161,7 @@ namespace HCore.Infrastructure.Persistence
 
             foreach (var claimValue in claims)
             {
-                if (!existingClaims.Any(c => c.Type == "permission" && c.Value == claimValue))
+                if (!existingClaims.Any(c => c.Type == "Permission" && c.Value == claimValue))
                 {
                     await roleManager.AddClaimAsync(role, new Claim("Permission", claimValue));
                 }

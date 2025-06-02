@@ -1,7 +1,6 @@
 ﻿using HCore.API.Extensions;
 using HCore.API.Filters;
 using HCore.Application;
-using HCore.Application.Modules.Auth.Services;
 using HCore.Infrastructure;
 using HCore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,11 +51,7 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<HCoreAuthorizeFilter>();
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<HCoreAuthorizeFilter>();
-});
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 

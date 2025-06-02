@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HCore.Application\HCore.Application.csproj" />
     <ProjectReference Include="..\HCore.Domain\HCore.Domain.csproj" />
   </ItemGroup>
 

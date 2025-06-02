@@ -1,6 +1,8 @@
 ﻿using HCore.Application.Modules.Auth.Services;
 using HCore.Application.Modules.Common.Constants;
 using HCore.Application.Modules.Common.Responses;
+using HCore.Application.Modules.Permissions.Dtos;
+using HCore.Application.Modules.Permissions.Interfaces;
 using HCore.Application.Modules.Roles.Dtos;
 using HCore.Application.Modules.Roles.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +14,12 @@ namespace HCore.API.Controllers.Admin
     public class RolesController : ControllerBase
     {
         private readonly IRoleService _roleService;
+        private readonly IRolePermissionService _rolePermService;
 
-        public RolesController(IRoleService roleService)
+        public RolesController(IRoleService roleService, IRolePermissionService rolePermission)
         {
             _roleService = roleService;
+            _rolePermService = rolePermission;
         }
         [HttpPost]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Create)]
@@ -56,16 +60,16 @@ namespace HCore.API.Controllers.Admin
         }
         [HttpGet("Permission/{id}")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
-        public async Task<BaseResponse<RoloPermissionDto>> GetPermissionById(string id)
+        public async Task<BaseResponse<RolePermissionDto>> GetPermissionById(string id)
         {
-            var result = await _roleService.GetPermissionById(id);
+            var result = await _rolePermService.GetPermissionById(id);
             return result;
         }
         [HttpPut("Permission")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
-        public async Task<BaseResponse<RoloPermissionDto>> UpdatePermision([FromBody] RoloPermissionDto input)
+        public async Task<BaseResponse<RolePermissionDto>> UpdatePermision([FromBody] RolePermissionDto input)
         {
-            var result = await _roleService.UpdatePermision(input);
+            var result = await _rolePermService.UpdatePermision(input);
             return result;
         }
     }

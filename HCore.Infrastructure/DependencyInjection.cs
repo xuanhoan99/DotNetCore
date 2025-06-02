@@ -1,8 +1,12 @@
-﻿using HCore.Domain.Entities;
+﻿using HCore.Application.Modules.Permissions.Interfaces;
+using HCore.Domain.Entities;
 using HCore.Domain.Repositories;
+using HCore.Infrastructure.Authorization;
 using HCore.Infrastructure.Logging;
 using HCore.Infrastructure.Persistence;
 using HCore.Infrastructure.Persistence.Repositories;
+using HCore.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +39,12 @@ namespace HCore.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             services.AddSingleton<SerilogLogger>(); // Đăng ký Logger như 1 Service Singleton
+
+            services.AddMemoryCache();
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IRolePermissionService, RolePermissionService>();
+
 
             return services;
         }

@@ -1,16 +1,13 @@
-﻿namespace HCore.Application.Modules.Auth.Services
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace HCore.Application.Modules.Auth.Services
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class HCoreAuthorizeAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+    public class HCoreAuthorizeAttribute : AuthorizeAttribute
     {
-        public string[] Permissions { get; }
-        public HCoreAuthorizeAttribute(params string[] permissions)
+        public HCoreAuthorizeAttribute(string module, string page, string action)
         {
-            Permissions = permissions;
-        }
-        public HCoreAuthorizeAttribute(string prefix, string pageName, string action)
-        {
-            Permissions = new[] { $"{prefix}.{pageName}.{action}" };
+            Policy = $"{module}.{page}.{action}";
         }
     }
 }
