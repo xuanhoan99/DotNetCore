@@ -1,8 +1,8 @@
-﻿using HCore.Application.Modules.Auth.Services;
-using HCore.Application.Modules.Common.Constants;
+﻿using HCore.Application.Modules.Common.Constants;
 using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.Users.Dtos;
 using HCore.Application.Modules.Users.Interfaces;
+using HCore.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HCore.API.Controllers.Admin

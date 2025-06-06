@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HCore.Application.Modules.Auth.Interfaces;
 using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Application.Modules.SysMenus.Interfaces;
@@ -13,17 +14,17 @@ namespace HCore.Application.Modules.SysMenus.Service
     {
         private readonly IGenericRepository<SysMenu, int> _sysMenuRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserService _userService;
+        private readonly IUserAuthManager _authManager;
         private readonly IMapper _mapper;
 
         public SysMenuService(
             IGenericRepository<SysMenu, int> sysMenuRepository,
-            IUserService userService,
+            IUserAuthManager authManager,
             IUnitOfWork unitOfWork,
             IMapper mapper)
         {
             _sysMenuRepository = sysMenuRepository;
-            _userService = userService;
+            _authManager = authManager;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -31,7 +32,7 @@ namespace HCore.Application.Modules.SysMenus.Service
         public async Task<BaseResponse<SysMenuDto>> Create(SysMenuDto input)
         {
             var entity = _mapper.Map<SysMenu>(input);
-            entity.CreatedBy = _userService.UserName;
+            entity.CreatedBy = _authManager.UserName;
             entity.CreatedAt = DateTime.UtcNow;
             entity.ApprovalStatus = "A";
 

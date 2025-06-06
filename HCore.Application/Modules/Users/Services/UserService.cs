@@ -3,7 +3,6 @@ using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.Users.Dtos;
 using HCore.Application.Modules.Users.Interfaces;
 using HCore.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -13,16 +12,12 @@ namespace HCore.Application.Modules.Users.Services
     public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public UserService(UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public UserService(UserManager<User> userManager, IMapper mapper)
         {
             _userManager = userManager;
-            _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
-        public string? UserName =>
-        _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
         public async Task<BaseResponse<UserResponseDto>> Create(UserDto input)
         {
             var user = _mapper.Map<User>(input);

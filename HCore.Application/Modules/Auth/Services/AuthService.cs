@@ -2,57 +2,32 @@
 using HCore.Application.Modules.Auth.Dtos;
 using HCore.Application.Modules.Auth.Interfaces;
 using HCore.Application.Modules.Common.Responses;
-using HCore.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace HCore.Application.Modules.Auth.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IConfiguration _configuration;
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly IUserAuthManager _authManager;
         private readonly IMapper _mapper;
 
         public AuthService(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IConfiguration configuration,
-            IHttpContextAccessor httpContextAccessor,
-            RoleManager<Role> roleManager,
+            IUserAuthManager authManager,
             IMapper mapper)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
-            _httpContextAccessor = httpContextAccessor;
-            _roleManager = roleManager;
+            _authManager = authManager;
             _mapper = mapper;
         }
 
         public async Task<BaseResponse<AuthResponseDto>> LoginAsync(LoginRequestDto request)
         {
-            var user = await _userManager.FindByNameAsync(request.Username);
-            if (user == null)
+            var user = await _authManager.FindByUsernameAsync(request.UserName);
+            if (user == null || !await _authManager.CheckPasswordAsync(user, request.Password))
             {
                 return BaseResponse<AuthResponseDto>.Fail("Invalid username or password");
             }
 
-            var login = await _signInManager.PasswordSignInAsync(user, request.Password, false, false);
-            if (!login.Succeeded)
-            {
-                return BaseResponse<AuthResponseDto>.Fail("Invalid username or password");
-            }
-
-            var token = await GenerateToken(user);
+            var token = await _authManager.GenerateTokenAsync(user);
             var result = new AuthResponseDto
             {
                 Token = token
@@ -62,26 +37,18 @@ namespace HCore.Application.Modules.Auth.Services
 
         public async Task<List<string>> GetAllPermissionsForCurrentUserAsync()
         {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null || !user.Identity.IsAuthenticated)
-                return new List<string>();
+            var user = await _authManager.GetCurrentUserAsync();
+            if (user == null) return new List<string>();
 
-            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-                return new List<string>();
-
-            var appUser = await _userManager.FindByIdAsync(userId);
-            if (appUser == null) return new List<string>();
-
-            var roleNames = await _userManager.GetRolesAsync(appUser);
+            var roles = await _authManager.GetUserRolesAsync(user);
             var roleClaims = new List<Claim>();
 
-            foreach (var roleName in roleNames)
+            foreach (var roleName in roles)
             {
-                var role = await _roleManager.FindByNameAsync(roleName);
+                var role = await _authManager.FindByRolenameAsync(roleName);
                 if (role != null)
                 {
-                    var claims = await _roleManager.GetClaimsAsync(role);
+                    var claims = await _authManager.GetClaimsByRoleAsync(role);
                     roleClaims.AddRange(claims);
                 }
             }
@@ -95,44 +62,11 @@ namespace HCore.Application.Modules.Auth.Services
             return permissions;
         }
 
-
-        private async Task<string> GenerateToken(User user)
-        {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-
-            var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName)
-        };
-
-            // Thêm các roles của user vào claims
-            var roles = await _userManager.GetRolesAsync(user);
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["ExpiryMinutes"]));
-
-            var token = new JwtSecurityToken(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
-                claims: claims,
-                expires: expiry,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
         public async Task<BaseResponse<GetCurrentLoginInformationsOutput>> GetUserConfigurationAsync()
         {
             var permissions = await GetAllPermissionsForCurrentUserAsync();
-            var user = _httpContextAccessor.HttpContext?.User;
 
-            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var appUser = await _userManager.FindByIdAsync(userId);
+            var appUser = await _authManager.GetCurrentUserAsync();
 
             var userResult = _mapper.Map<CurrentUserDto>(appUser);
 
