@@ -1,6 +1,6 @@
 ﻿namespace HCore.Application.Modules.Roles.Dtos
 {
-    public class RoleOuputDto
+    public class RoleOutputDto
     {
         public int? Id { get; set; }
         public string Name { get; set; }

@@ -18,18 +18,18 @@ namespace HCore.Application.Modules.Roles.Services
             _mapper = mapper;
         }
 
-        public async Task<BaseResponse<RoleOuputDto>> Create(RoleInsInputDto input)
+        public async Task<BaseResponse<RoleOutputDto>> Create(RoleInsInputDto input)
         {
             var role = _mapper.Map<Role>(input);
             var result = await _roleManager.CreateAsync(role);
             if (!result.Succeeded)
             {
                 var errorMessages = result.Errors.Select(e => e.Description).ToList();
-                return BaseResponse<RoleOuputDto>.Fail(string.Join("; ", errorMessages));
+                return BaseResponse<RoleOutputDto>.Fail(string.Join("; ", errorMessages));
             }
 
-            var roleResponse = _mapper.Map<RoleOuputDto>(role);
-            return BaseResponse<RoleOuputDto>.Ok(roleResponse, "Create successfully");
+            var roleResponse = _mapper.Map<RoleOutputDto>(role);
+            return BaseResponse<RoleOutputDto>.Ok(roleResponse, "Create successfully");
         }
 
         public async Task<BaseResponse<bool>> Delete(string id)
@@ -49,37 +49,37 @@ namespace HCore.Application.Modules.Roles.Services
 
         }
 
-        public async Task<BaseResponse<List<RoleOuputDto>>> GetAllRole()
+        public async Task<BaseResponse<List<RoleOutputDto>>> GetAllRole()
         {
             var roles = await _roleManager.Roles.ToListAsync();
-            var result = _mapper.Map<List<RoleOuputDto>>(roles);
-            return BaseResponse<List<RoleOuputDto>>.Ok(result, "Get all roles successfully");
+            var result = _mapper.Map<List<RoleOutputDto>>(roles);
+            return BaseResponse<List<RoleOutputDto>>.Ok(result, "Get all roles successfully");
         }
 
-        public async Task<BaseResponse<RoleOuputDto>> GetById(string id)
+        public async Task<BaseResponse<RoleOutputDto>> GetById(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
-                return BaseResponse<RoleOuputDto>.Fail("Role not found");
+                return BaseResponse<RoleOutputDto>.Fail("Role not found");
 
-            var result = _mapper.Map<RoleOuputDto>(role);
-            return BaseResponse<RoleOuputDto>.Ok(result, "Get role successfully");
+            var result = _mapper.Map<RoleOutputDto>(role);
+            return BaseResponse<RoleOutputDto>.Ok(result, "Get role successfully");
         }
 
-        public async Task<BaseResponse<RoleOuputDto>> Update(string id, RoleInputDto input)
+        public async Task<BaseResponse<RoleOutputDto>> Update(string id, RoleInputDto input)
         {
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
-                return BaseResponse<RoleOuputDto>.Fail("Role not found");
+                return BaseResponse<RoleOutputDto>.Fail("Role not found");
 
             _mapper.Map(input, role); // ánh xạ các trường từ input sang entity
 
             var result = await _roleManager.UpdateAsync(role);
             if (!result.Succeeded)
-                return BaseResponse<RoleOuputDto>.Fail("Update failed: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                return BaseResponse<RoleOutputDto>.Fail("Update failed: " + string.Join(", ", result.Errors.Select(e => e.Description)));
 
-            var updatedRole = _mapper.Map<RoleOuputDto>(role);
-            return BaseResponse<RoleOuputDto>.Ok(updatedRole, "Update successfully");
+            var updatedRole = _mapper.Map<RoleOutputDto>(role);
+            return BaseResponse<RoleOutputDto>.Ok(updatedRole, "Update successfully");
         }
     }
 }

@@ -20,7 +20,8 @@ namespace HCore.Application.Modules.Common.Mappings
             CreateMap<User, CurrentUserDto>().ReverseMap();
 
             CreateMap<Role, RoleInsInputDto>().ReverseMap();
-            CreateMap<Role, RoleOuputDto>().ReverseMap();
+            CreateMap<Role, RoleOutputDto>().ReverseMap();
+            CreateMap<Role, RoleInputDto>().ReverseMap();
         }
     }
 }

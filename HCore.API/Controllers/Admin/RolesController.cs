@@ -23,7 +23,7 @@ namespace HCore.API.Controllers.Admin
         }
         [HttpPost]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Create)]
-        public async Task<BaseResponse<RoleOuputDto>> Create([FromBody] RoleInsInputDto roleInsInputDto)
+        public async Task<BaseResponse<RoleOutputDto>> Create([FromBody] RoleInsInputDto roleInsInputDto)
         {
             var result = await _roleService.Create(roleInsInputDto);
             return result;
@@ -31,14 +31,14 @@ namespace HCore.API.Controllers.Admin
         }
         [HttpGet("{id}")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
-        public async Task<BaseResponse<RoleOuputDto>> GetById(string id)
+        public async Task<BaseResponse<RoleOutputDto>> GetById(string id)
         {
             var result = await _roleService.GetById(id);
             return result;
         }
         [HttpPut("{id}")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
-        public async Task<BaseResponse<RoleOuputDto>> Update(string id, [FromBody] RoleInputDto role)
+        public async Task<BaseResponse<RoleOutputDto>> Update(string id, [FromBody] RoleInputDto role)
         {
             var result = await _roleService.Update(id, role);
             return result;
@@ -53,7 +53,7 @@ namespace HCore.API.Controllers.Admin
         }
         [HttpGet("all")]
         [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Search)]
-        public async Task<BaseResponse<List<RoleOuputDto>>> GetAll()
+        public async Task<BaseResponse<List<RoleOutputDto>>> GetAll()
         {
             var result = await _roleService.GetAllRole();
             return result;

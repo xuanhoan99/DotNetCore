@@ -22,7 +22,6 @@ builder.Services.AddCors(options =>
               .AllowCredentials(); // nếu dùng cookie hoặc token trong header
     });
 });
-// ??ng ký các d?ch v? trong Application và Infrastructure
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
