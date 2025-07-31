@@ -12,11 +12,14 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Đăng ký CORS
+var corsOrigins = builder.Configuration["App:CorsOrigins"]
+    ?.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularDevClient", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(corsOrigins!)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // nếu dùng cookie hoặc token trong header
@@ -35,7 +38,7 @@ builder.Services.AddAuthentication(options =>
 })
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;
+        options.RequireHttpsMetadata = false; // Chỉ dùng trong môi trường phát triển, không nên dùng trong production
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -45,7 +48,8 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"])),
+            //ClockSkew = TimeSpan.Zero // không cho phép độ trễ thời gian
         };
     });
 
@@ -106,15 +110,20 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("AllowAngularDevClient");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "HCore API V1");
         options.DocumentTitle = "HCore API Documentation";
     }); //URL: /swagger
-}
+
+
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/swagger");
+    return Task.CompletedTask;
+});
 
 app.UseHCoreExceptionMiddleware(); // đặt sớm trong pipeline
 

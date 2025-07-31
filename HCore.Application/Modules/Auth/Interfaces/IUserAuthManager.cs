@@ -7,7 +7,6 @@ namespace HCore.Application.Modules.Auth.Interfaces
     {
         Task<User?> FindByUsernameAsync(string userName);
         Task<bool> CheckPasswordAsync(User user, string password);
-        Task<string> GenerateTokenAsync(User user);
         Task<User?> GetCurrentUserAsync();
         Task<IList<string>> GetUserRolesAsync(User user);
         Task<Role?> FindByRolenameAsync(string roleName);

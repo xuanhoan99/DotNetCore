@@ -16,10 +16,12 @@ namespace HCore.Application
         {
             // Đăng ký AutoMapper 
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
+
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISysMenuService, SysMenuService>();
+            services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
             return services;
         }

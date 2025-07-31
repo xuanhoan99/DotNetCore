@@ -99,5 +99,17 @@ namespace HCore.Infrastructure.Persistence.Repositories
 
             return await query.FirstOrDefaultAsync(e => e.Id!.Equals(id));
         }
+
+        public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
     }
 }

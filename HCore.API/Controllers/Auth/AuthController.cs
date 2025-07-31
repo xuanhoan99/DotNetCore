@@ -32,5 +32,19 @@ namespace HCore.API.Controllers.Auth
             var result = await _authService.GetUserConfigurationAsync();
             return result;
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<BaseResponse<AuthResponseDto>> RefreshToken()
+        {
+            var result = await _authService.RefreshTokenAsync();
+            return result;
+        }
+
+        [HttpPost("logout")]
+        public async Task<BaseResponse<object>> Logout()
+        {
+            var result = await _authService.RevokeTokenAsync();
+            return result;
+        }
     }
 }

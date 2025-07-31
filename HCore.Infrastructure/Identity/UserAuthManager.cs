@@ -16,20 +16,17 @@ namespace HCore.Infrastructure.Identity
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IConfiguration _configuration;
 
         public UserAuthManager(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             RoleManager<Role> roleManager,
-            IHttpContextAccessor httpContextAccessor,
-            IConfiguration configuration)
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
-            _configuration = configuration;
         }
         public string? UserName =>
         _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
@@ -41,32 +38,7 @@ namespace HCore.Infrastructure.Identity
         {
             var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
             return result.Succeeded;
-        }
-
-        public async Task<string> GenerateTokenAsync(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName!)
-            };
-            // Thêm các roles của user vào claims
-            //var roles = await _userManager.GetRolesAsync(user);
-            //claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpiryMinutes"]));
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JwtSettings:Issuer"],
-                audience: _configuration["JwtSettings:Audience"],
-                claims: claims,
-                expires: expiry,
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        }        
 
         public async Task<User?> GetCurrentUserAsync()
         {

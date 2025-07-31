@@ -24,6 +24,26 @@ namespace HCore.Infrastructure.Persistence
             builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
             builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
 
+            builder.Entity<SysMenu>()
+                .HasIndex(m => m.EnglishName)
+                .IsUnique();
+
+            builder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Token)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
+                entity.Property(x => x.IsRevoked)
+                    .HasDefaultValue(false);
+
+                entity.HasOne(x => x.User)
+                    .WithMany() // hoặc WithMany(x => x.RefreshTokens) nếu cần //?? 
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
         }
     }

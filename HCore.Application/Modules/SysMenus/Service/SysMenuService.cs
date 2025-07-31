@@ -14,28 +14,28 @@ namespace HCore.Application.Modules.SysMenus.Service
     {
         private readonly IGenericRepository<SysMenu, int> _sysMenuRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserAuthManager _authManager;
         private readonly IMapper _mapper;
 
         public SysMenuService(
             IGenericRepository<SysMenu, int> sysMenuRepository,
-            IUserAuthManager authManager,
             IUnitOfWork unitOfWork,
             IMapper mapper)
         {
             _sysMenuRepository = sysMenuRepository;
-            _authManager = authManager;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<BaseResponse<SysMenuDto>> Create(SysMenuDto input)
         {
-            var entity = _mapper.Map<SysMenu>(input);
-            entity.CreatedBy = _authManager.UserName;
-            entity.CreatedAt = DateTime.UtcNow;
-            entity.ApprovalStatus = "A";
+            // 1. Kiểm tra trùng EnglishName
+            var exists = await _sysMenuRepository.AnyAsync(x => x.EnglishName == input.EnglishName);
+            if (exists)
+            {
+                return BaseResponse<SysMenuDto>.Fail("Menu English Name already exists.");
+            }
 
+            var entity = _mapper.Map<SysMenu>(input);
             await _sysMenuRepository.AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
