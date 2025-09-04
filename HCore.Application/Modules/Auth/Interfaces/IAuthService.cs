@@ -9,5 +9,6 @@ namespace HCore.Application.Modules.Auth.Interfaces
         Task<BaseResponse<GetCurrentLoginInformationsOutput>> GetUserConfigurationAsync();
         Task<BaseResponse<AuthResponseDto>> RefreshTokenAsync();
         Task<BaseResponse<object>> RevokeTokenAsync();
+        Task<BaseResponse<object>> ClearPermissionCacheAsync(string userId);
     }
 }

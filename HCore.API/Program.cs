@@ -111,12 +111,12 @@ app.UseCors("AllowAngularDevClient");
 
 // Configure the HTTP request pipeline.
 
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "HCore API V1");
-        options.DocumentTitle = "HCore API Documentation";
-    }); //URL: /swagger
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "HCore API V1");
+    options.DocumentTitle = "HCore API Documentation";
+}); //URL: /swagger
 
 
 app.MapGet("/", context =>

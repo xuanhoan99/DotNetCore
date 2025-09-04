@@ -46,5 +46,12 @@ namespace HCore.API.Controllers.Auth
             var result = await _authService.RevokeTokenAsync();
             return result;
         }
+
+        [HttpPost("refresh-permissions/{userId}")]
+        public async Task<BaseResponse<object>> ClearPermissionCacheAsync(string userId)
+        {
+            var result = await _authService.ClearPermissionCacheAsync(userId);
+            return result;
+        }
     }
 }

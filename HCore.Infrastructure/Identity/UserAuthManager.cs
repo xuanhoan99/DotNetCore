@@ -2,11 +2,7 @@
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace HCore.Infrastructure.Identity
 {
@@ -38,7 +34,7 @@ namespace HCore.Infrastructure.Identity
         {
             var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
             return result.Succeeded;
-        }        
+        }
 
         public async Task<User?> GetCurrentUserAsync()
         {

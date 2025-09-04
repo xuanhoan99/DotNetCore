@@ -5,19 +5,63 @@ using HCore.Application.Modules.Users.Interfaces;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace HCore.Application.Modules.Users.Services
 {
     public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
-        public UserService(UserManager<User> userManager, IMapper mapper)
+        public UserService(UserManager<User> userManager, IMapper mapper, RoleManager<Role> roleManager)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
+
+        public async Task<BaseResponse<bool>> AssignRoles(string userId, List<string> roleNames)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return BaseResponse<bool>.Fail("Không tìm thấy user.");
+
+            roleNames ??= new List<string>();
+
+            // Validate role tồn tại
+            var invalid = new List<string>();
+            foreach (var r in roleNames.Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                if (!await _roleManager.RoleExistsAsync(r))
+                    invalid.Add(r);
+            }
+            if (invalid.Count > 0)
+                return BaseResponse<bool>.Fail("Role không tồn tại: " + string.Join(", ", invalid));
+
+            // Lấy roles hiện tại
+            var current = await _userManager.GetRolesAsync(user);
+
+            // Tính toAdd / toRemove
+            var toAdd = roleNames.Except(current, StringComparer.OrdinalIgnoreCase).ToList();
+            var toRemove = current.Except(roleNames, StringComparer.OrdinalIgnoreCase).ToList();
+
+            if (toRemove.Count > 0)
+            {
+                var rmRes = await _userManager.RemoveFromRolesAsync(user, toRemove);
+                if (!rmRes.Succeeded)
+                    return BaseResponse<bool>.Fail("Bỏ role lỗi: " + string.Join("; ", rmRes.Errors.Select(e => e.Description)));
+            }
+
+            if (toAdd.Count > 0)
+            {
+                var addRes = await _userManager.AddToRolesAsync(user, toAdd);
+                if (!addRes.Succeeded)
+                    return BaseResponse<bool>.Fail("Gán role lỗi: " + string.Join("; ", addRes.Errors.Select(e => e.Description)));
+            }
+
+            return BaseResponse<bool>.Ok(true, "Cập nhật roles thành công.");
+        }
+
         public async Task<BaseResponse<UserResponseDto>> Create(UserDto input)
         {
             var user = _mapper.Map<User>(input);
@@ -63,6 +107,16 @@ namespace HCore.Application.Modules.Users.Services
 
             var result = _mapper.Map<UserResponseDto>(user);
             return BaseResponse<UserResponseDto>.Ok(result, "Get user successfully");
+        }
+
+        public async Task<BaseResponse<List<string>>> GetUserRoles(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return BaseResponse<List<string>>.Fail("Không tìm thấy user.");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return BaseResponse<List<string>>.Ok(roles.ToList());
         }
 
         public async Task<BaseResponse<UserResponseDto>> Update(string id, UserDto input)

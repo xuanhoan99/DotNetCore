@@ -22,7 +22,7 @@ namespace HCore.API.Controllers.Admin
             _rolePermService = rolePermission;
         }
         [HttpPost]
-        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Create)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.Create)]
         public async Task<BaseResponse<RoleOutputDto>> Create([FromBody] RoleInsInputDto roleInsInputDto)
         {
             var result = await _roleService.Create(roleInsInputDto);
@@ -30,14 +30,14 @@ namespace HCore.API.Controllers.Admin
 
         }
         [HttpGet("{id}")]
-        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
         public async Task<BaseResponse<RoleOutputDto>> GetById(string id)
         {
             var result = await _roleService.GetById(id);
             return result;
         }
         [HttpPut("{id}")]
-        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
         public async Task<BaseResponse<RoleOutputDto>> Update(string id, [FromBody] RoleInputDto role)
         {
             var result = await _roleService.Update(id, role);
@@ -45,28 +45,35 @@ namespace HCore.API.Controllers.Admin
 
         }
         [HttpDelete("{id}")]
-        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Delete)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.Delete)]
         public async Task<BaseResponse<bool>> Delete(string id)
         {
             var result = await _roleService.Delete(id);
             return result;
         }
         [HttpGet("all")]
-        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Search)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.Search)]
         public async Task<BaseResponse<List<RoleOutputDto>>> GetAll()
         {
             var result = await _roleService.GetAllRole();
             return result;
         }
         [HttpGet("Permission/{id}")]
-        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.View)]
         public async Task<BaseResponse<RolePermissionDto>> GetPermissionById(string id)
         {
             var result = await _rolePermService.GetPermissionById(id);
             return result;
         }
+        [HttpGet("PermissionAll")]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.Search)]
+        public async Task<BaseResponse<RolePermissionDto>> GetPermissionAll()
+        {
+            var result = await _rolePermService.GetPermissionAll();
+            return result;
+        }
         [HttpPut("Permission")]
-        [HCoreAuthorize(HCorePermissions.Prefix.Main, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
+        [HCoreAuthorize(HCorePermissions.Prefix.Administration, HCorePermissions.Page.Role, HCorePermissions.Action.Update)]
         public async Task<BaseResponse<RolePermissionDto>> UpdatePermision([FromBody] RolePermissionDto input)
         {
             var result = await _rolePermService.UpdatePermision(input);

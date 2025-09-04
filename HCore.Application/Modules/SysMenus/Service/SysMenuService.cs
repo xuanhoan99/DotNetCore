@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using HCore.Application.Modules.Auth.Interfaces;
 using HCore.Application.Modules.Common.Responses;
 using HCore.Application.Modules.SysMenus.Dtos;
 using HCore.Application.Modules.SysMenus.Interfaces;
-using HCore.Application.Modules.Users.Interfaces;
 using HCore.Domain.Entities;
 using HCore.Domain.Repositories;
 using System.Linq.Expressions;

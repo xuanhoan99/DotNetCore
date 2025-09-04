@@ -7,5 +7,6 @@ namespace HCore.Application.Modules.Permissions.Interfaces
     {
         Task<BaseResponse<RolePermissionDto>> GetPermissionById(string roleId);
         Task<BaseResponse<RolePermissionDto>> UpdatePermision(RolePermissionDto input);
+        Task<BaseResponse<RolePermissionDto>> GetPermissionAll();
     }
 }

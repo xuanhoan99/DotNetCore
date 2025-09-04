@@ -4,6 +4,7 @@ using HCore.Application.Modules.Auth.Interfaces;
 using HCore.Application.Modules.Common.Responses;
 using HCore.Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,19 +20,22 @@ namespace HCore.Application.Modules.Auth.Services
         private readonly IConfiguration _configuration;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMemoryCache _cache;
 
         public AuthService(
             IUserAuthManager authManager,
             IMapper mapper,
             IConfiguration configuration,
             IRefreshTokenService refreshTokenService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IMemoryCache cache)
         {
             _authManager = authManager;
             _mapper = mapper;
             _configuration = configuration;
             _refreshTokenService = refreshTokenService;
             _httpContextAccessor = httpContextAccessor;
+            _cache = cache;
         }
 
         public async Task<BaseResponse<AuthResponseDto>> LoginAsync(LoginRequestDto request)
@@ -47,13 +51,13 @@ namespace HCore.Application.Modules.Auth.Services
             var token = this.GenerateToken(user);
             var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(user);
 
-           
+
             _httpContextAccessor.HttpContext?.Response.Cookies.Append("refresh_token", refreshToken.Token, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 IsEssential = true,
-                SameSite = SameSiteMode.None, 
+                SameSite = SameSiteMode.None,
                 Expires = refreshToken.ExpiryDate
             });
 
@@ -137,6 +141,15 @@ namespace HCore.Application.Modules.Auth.Services
             _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refresh_token");
             return BaseResponse<object>.Ok(null, "Token revoked successfully.");
         }
+
+        public Task<BaseResponse<object>> ClearPermissionCacheAsync(string userId)
+        {
+            var cacheKey = $"perm:uid:{userId}";
+            _cache.Remove(cacheKey);
+
+            return Task.FromResult(BaseResponse<object>.Ok(null, "Permission cache cleared successfully."));
+        }
+
         private async Task<List<string>> GetAllPermissionsForCurrentUserAsync()
         {
             var user = await _authManager.GetCurrentUserAsync();

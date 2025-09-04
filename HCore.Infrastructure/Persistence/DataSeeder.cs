@@ -42,7 +42,7 @@ namespace HCore.Infrastructure.Persistence
                 {
                     Name = "Trang chủ",
                     EnglishName = "Home",
-                    Url = "/app/Dashboard",
+                    Url = "/app/main/home",
                     Order = 1,
                     ParentId = null,
                     Icon = "home",
@@ -52,13 +52,13 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
                     IsDeleted = false,
-                    PermissionName = "Pages.Main.Dashboard"
+                    PermissionName = "Pages.Main.Home"
                 },
                 new SysMenu
                 {
                     Name = "Quản trị hệ thống",
                     EnglishName = "SystemManager",
-                    Url = "/app/admin/SystemManager",
+                    Url = "/app/admin/system-manager",
                     Order = 2,
                     ParentId = null,
                     Icon = "fa-solid fa-folder",
@@ -68,13 +68,13 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
                     IsDeleted = false,
-                    PermissionName = "Pages.Main.SystemManager"
+                    PermissionName = "Pages.Administration.SystemManager"
                 },
                 new SysMenu
                 {
                     Name = "Quản lý người dùng",
                     EnglishName = "User",
-                    Url = "/app/admin/Users",
+                    Url = "/app/admin/user",
                     Order = 1,
                     ParentId = 2,
                     Icon = "users",
@@ -84,13 +84,13 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
                     IsDeleted = false,
-                    PermissionName = "Pages.Main.User"
+                    PermissionName = "Pages.Administration.User"
                 },
                 new SysMenu
                 {
                     Name = "Thông tin trang",
                     EnglishName = "SysMenu",
-                    Url = "/app/admin/SysMenu",
+                    Url = "/app/admin/sys-menu",
                     Order = 2,
                     ParentId = 2,
                     Icon = "fa-solid fa-folder",
@@ -100,13 +100,13 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
                     IsDeleted = false,
-                    PermissionName = "Pages.Main.SysMenu"
+                    PermissionName = "Pages.Administration.SysMenu"
                 },
                 new SysMenu
                 {
                     Name = "Vai trò",
                     EnglishName = "Role",
-                    Url = "/app/admin/Roles",
+                    Url = "/app/admin/role",
                     Order = 3,
                     ParentId = 2,
                     Icon = "shield",
@@ -116,7 +116,7 @@ namespace HCore.Infrastructure.Persistence
                     ApprovedAt = now,
                     ApprovalStatus = "Approved",
                     IsDeleted = false,
-                    PermissionName = "Pages.Main.Role"
+                    PermissionName = "Pages.Administration.Role"
                 }
             };
 
@@ -138,25 +138,31 @@ namespace HCore.Infrastructure.Persistence
             var claims = new[]
             {
                 "Pages.Main.Home",
-                "Pages.Main.SystemManager",
-                "Pages.Main.User.Create",
-                "Pages.Main.User.Update",
-                "Pages.Main.User.Delete",
-                "Pages.Main.User.View",
-                "Pages.Main.User.Search",
-                "Pages.Main.User.Reject",
-                "Pages.Main.SysMenu.Create",
-                "Pages.Main.SysMenu.Update",
-                "Pages.Main.SysMenu.Delete",
-                "Pages.Main.SysMenu.View",
-                "Pages.Main.SysMenu.Search",
-                "Pages.Main.SysMenu.Reject",
-                "Pages.Main.Role.Create",
-                "Pages.Main.Role.Update",
-                "Pages.Main.Role.Delete",
-                "Pages.Main.Role.View",
-                "Pages.Main.Role.Search",
-                "Pages.Main.Role.Reject"
+                "Pages.Administration.SystemManager",
+                "Pages.Administration.User",
+                "Pages.Administration.User.Approve",
+                "Pages.Administration.User.Create",
+                "Pages.Administration.User.Update",
+                "Pages.Administration.User.Delete",
+                "Pages.Administration.User.View",
+                "Pages.Administration.User.Search",
+                "Pages.Administration.User.Reject",
+                "Pages.Administration.SysMenu",
+                "Pages.Administration.SysMenu.Approve",
+                "Pages.Administration.SysMenu.Create",
+                "Pages.Administration.SysMenu.Update",
+                "Pages.Administration.SysMenu.Delete",
+                "Pages.Administration.SysMenu.View",
+                "Pages.Administration.SysMenu.Search",
+                "Pages.Administration.SysMenu.Reject",
+                "Pages.Administration.Role",
+                "Pages.Administration.Role.Approve",
+                "Pages.Administration.Role.Create",
+                "Pages.Administration.Role.Update",
+                "Pages.Administration.Role.Delete",
+                "Pages.Administration.Role.View",
+                "Pages.Administration.Role.Search",
+                "Pages.Administration.Role.Reject"
             };
 
             foreach (var claimValue in claims)

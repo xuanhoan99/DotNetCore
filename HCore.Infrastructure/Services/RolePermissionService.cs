@@ -48,20 +48,11 @@ namespace HCore.Infrastructure.Services
         }
         public async Task<BaseResponse<RolePermissionDto>> GetPermissionById(string roleId)
         {
-            var actions = typeof(HCorePermissions.Action)
-                .GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Select(f => f.GetValue(null))
-                .Select(x => x.ToString())
-                .OrderBy(x => x.ToString())
-                .ToList();
+            // todo có thể cache phần "all" vì menu/actions ít đổi
+            var allPermsResult = await BuildAllPermissionsAsync();
 
-            var menuResult = await _sysMenuService.GetAll();
-            if (!menuResult.Success)
-                return BaseResponse<RolePermissionDto>.Fail("Không lấy được danh sách menu");
-            var menuData = menuResult.Data;
-
-            var allPermissions = new List<RoleClaimsDto>();
-            allPermissions.GetPermissions(menuData, actions);
+            if (allPermsResult is null || !allPermsResult.Success)
+                return BaseResponse<RolePermissionDto>.Fail(allPermsResult?.Message ?? "Không dựng được permissions");
 
             var role = await _roleManager.FindByIdAsync(roleId);
             if (role == null)
@@ -73,17 +64,60 @@ namespace HCore.Infrastructure.Services
                        .Where(c => c.Type == "Permission")
                        .Select(c => c.Value)
                );
-            foreach (var perm in allPermissions)
-            {
-                if (roleClaimValues.Contains(perm.Value))
-                    perm.Selected = true;
-            }
+
+            // gán Selected theo role
+            foreach (var perm in allPermsResult.Data)
+                perm.Selected = roleClaimValues.Contains(perm.Value);
+
             var result = new RolePermissionDto
             {
                 RoleId = roleId,
-                RoleClaims = allPermissions
+                RoleClaims = allPermsResult.Data
             };
-            return BaseResponse<RolePermissionDto>.Ok(result, "Lấy danh sách permision thành công");
+            return BaseResponse<RolePermissionDto>.Ok(result, "Lấy danh sách permission thành công");
+        }
+
+        public async Task<BaseResponse<RolePermissionDto>> GetPermissionAll()
+        {
+            // cũng có thể cache
+            var allPermsResult = await BuildAllPermissionsAsync();
+
+            if (allPermsResult is null || !allPermsResult.Success)
+                return BaseResponse<RolePermissionDto>.Fail(allPermsResult?.Message ?? "Không dựng được permissions");
+
+            var result = new RolePermissionDto
+            {
+                RoleId = null, // hoặc "", tùy DTO của bạn
+                RoleClaims = allPermsResult.Data
+            };
+            return BaseResponse<RolePermissionDto>.Ok(result, "Lấy toàn bộ permission thành công");
+        }
+
+        private static List<string> GetActions()
+        {
+            return typeof(HCorePermissions.Action)
+                .GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Select(f => f.GetValue(null)?.ToString())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .OrderBy(x => x)
+                .ToList()!;
+        }
+
+        private async Task<BaseResponse<List<RoleClaimsDto>>> BuildAllPermissionsAsync()
+        {
+            var actions = GetActions();
+
+            var menuResult = await _sysMenuService.GetAll();
+            if (!menuResult.Success)
+                return BaseResponse<List<RoleClaimsDto>>.Fail("Không lấy được danh sách menu");
+
+            var allPermissions = new List<RoleClaimsDto>();
+            allPermissions.GetPermissions(menuResult.Data, actions); // dùng extension của bạn
+
+            // đảm bảo mặc định Selected=false
+            foreach (var p in allPermissions) p.Selected = false;
+
+            return BaseResponse<List<RoleClaimsDto>>.Ok(allPermissions);
         }
     }
 }

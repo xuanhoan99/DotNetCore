@@ -1,14 +1,7 @@
 ﻿using HCore.Application.Modules.Auth.Interfaces;
-using HCore.Domain.Common;
 using HCore.Domain.Entities;
 using HCore.Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HCore.Application.Modules.Auth.Services
 {
@@ -38,7 +31,7 @@ namespace HCore.Application.Modules.Auth.Services
 
         public async Task<RefreshToken?> GetByTokenAsync(string token)
         {
-            return await _refreshTokenRepository.FirstOrDefaultAsync(x => x.Token == token,x => x.User);
+            return await _refreshTokenRepository.FirstOrDefaultAsync(x => x.Token == token, x => x.User);
         }
 
         public async Task RevokeTokenAsync(RefreshToken token)

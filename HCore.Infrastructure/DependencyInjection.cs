@@ -1,5 +1,6 @@
 ﻿using HCore.Application.Modules.Auth.Interfaces;
 using HCore.Application.Modules.Permissions.Interfaces;
+using HCore.Application.Modules.Users.Interfaces;
 using HCore.Domain.Entities;
 using HCore.Domain.Repositories;
 using HCore.Infrastructure.Authorization;
@@ -47,6 +48,8 @@ namespace HCore.Infrastructure
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
             services.AddScoped<IRolePermissionService, RolePermissionService>();
             services.AddScoped<IUserAuthManager, UserAuthManager>();
+
+            services.AddScoped<IUserQueries, UserQueries>();
 
             return services;
         }

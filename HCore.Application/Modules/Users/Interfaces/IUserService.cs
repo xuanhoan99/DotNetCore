@@ -10,5 +10,8 @@ namespace HCore.Application.Modules.Users.Interfaces
         Task<BaseResponse<List<UserResponseDto>>> GetAllUser();
         Task<BaseResponse<UserResponseDto>> GetById(string id);
         Task<BaseResponse<UserResponseDto>> Update(string id, UserDto input);
+        // Quản lý role
+        Task<BaseResponse<bool>> AssignRoles(string userId, List<string> roleNames);
+        Task<BaseResponse<List<string>>> GetUserRoles(string userId);
     }
 }
